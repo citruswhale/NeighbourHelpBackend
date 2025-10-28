@@ -67,6 +67,21 @@ export const getReviewsForService = async (req, res) => {
     }
 };
 
+// ✅ Get all reviews written by a specific user (consumer)
+export const getReviewsByUser = async (req, res) => {
+    try {
+        const reviews = await Review.find({ user: req.params.userId })
+            .populate("service", "serviceName description") // show basic service info
+            .populate("user", "name email") // show user info
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(reviews);
+    } catch (error) {
+        console.error("Error fetching user's reviews:", error);
+        res.status(500).json({ message: "Error fetching user's reviews", error });
+    }
+};
+
 // DELETE /api/reviews/:id
 export const deleteReview = async (req, res) => {
     try {

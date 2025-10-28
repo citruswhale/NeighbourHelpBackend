@@ -25,9 +25,23 @@ export const getServiceById = async (req, res) => {
     }
 };
 
+// ✅ Get all services created by a specific user (provider)
+export const getServicesByUser = async (req, res) => {
+    try {
+        const services = await Service.find({ provider: req.params.userId })
+            .populate("provider", "name email phone")
+            .sort({ createdAt: -1 });
+        console.log(services);
+        res.status(200).json(services);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching user's services", error });
+    }
+};
+
 // ✅ Create a new service (Provider only)
 export const createService = async (req, res) => {
     try {
+        console.log("Started");
         const { serviceName, description, contactInfo, workingHours, photo } = req.body;
 
         const service = new Service({
